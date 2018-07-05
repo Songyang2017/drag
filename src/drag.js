@@ -21,13 +21,11 @@
 			flashing:{
 				color: null
 			}
-		}
-			
+		}	
 		for(var i in options){
 			_this.options[i] = options[i];
 		}
-
-
+		
 		_this.wrapper.addEventListener('touchstart',function(e){
 			var e = e||window.event;
 
