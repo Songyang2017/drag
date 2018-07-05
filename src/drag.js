@@ -28,7 +28,6 @@
 		
 		_this.wrapper.addEventListener('touchstart',function(e){
 			var e = e||window.event;
-
 			if(e.preventDefault()){
 				e.preventDefault();
 			}else{
@@ -43,7 +42,6 @@
 
 		_this.wrapper.addEventListener('touchmove',function(e){
 			var e = e||window.event;
-
 			if(touch_flag){
 				//	分别减去滚动的宽和高
 				var MoveX = e.touches[0].pageX - window.scrollX -(boundRect.width/2); 
