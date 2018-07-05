@@ -1,7 +1,7 @@
 /**
  * @drag.js
  * @author songyang2017
- * @version 1.0.0
+ * @version 2.0.0
  * @Created: 2018-07-05
  * @description 拖拽移动端导航球，使其位置发生改变
  */
@@ -21,18 +21,19 @@
 			flashing:{
 				color: null
 			}
-		}	
+		}
+			
 		for(var i in options){
 			_this.options[i] = options[i];
 		}
 		
+		window.addEventListener('touchstart',function(e){
+			e.preventDefault();
+		}) //来源 https://segmentfault.com/a/1190000008512184
+
 		_this.wrapper.addEventListener('touchstart',function(e){
 			var e = e||window.event;
-			if(e.preventDefault()){
-				e.preventDefault();
-			}else{
-				e.returnValue=false;
-			}
+			e.preventDefault();
 
 			touch_flag = true;
 			if(_this.options.flashing.color){
@@ -42,10 +43,14 @@
 
 		_this.wrapper.addEventListener('touchmove',function(e){
 			var e = e||window.event;
+			e.preventDefault();
+			var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+			var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
+
 			if(touch_flag){
 				//	分别减去滚动的宽和高
-				var MoveX = e.touches[0].pageX - window.scrollX -(boundRect.width/2); 
-				var MoveY = e.touches[0].pageY - window.scrollY - (boundRect.height/2);
+				var MoveX = e.touches[0].pageX - scrollLeft -(boundRect.width/2); 
+				var MoveY = e.touches[0].pageY - scrollTop - (boundRect.height/2);
 
 				if(_this.options.flashing.color){
 					_this.wrapper.style.boxShadow = `0px 0px 21px 2px ${_this.options.flashing.color}`
@@ -66,7 +71,7 @@
 				_this.wrapper.style.left = `${MoveX}px`;
 				_this.wrapper.style.top = `${MoveY}px`;
 			}
-		})
+		}) //来源 https://segmentfault.com/a/1190000008512184
 		
 		_this.wrapper.addEventListener('touchend',function(e){
 			touch_flag = false;
