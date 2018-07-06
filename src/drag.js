@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @drag.js
  * @author songyang2017
  * @version 1.0.0
@@ -18,9 +18,10 @@
 		_this.wrapper.style.visibility = 'visible'
 		_this.options = {
 			edge: true,
-			flashing:{
-				color: null
-			}
+			flashing:{	//开启阴影并自定义颜色
+				color: null 
+			},
+			click: false //开启可点击事件，默认为不可点击
 		}
 			
 		for(var i in options){
@@ -28,12 +29,15 @@
 		}
 		
 		window.addEventListener('touchmove',function(e){
-			//e.preventDefault();
+		
 		},{passive:false}) //来源 https://segmentfault.com/a/1190000008512184, 解决iOS下，页面滑动this.wrapper touchstart事件不灵敏bug
 
 		_this.wrapper.addEventListener('touchstart',function(e){
 			var e = e||window.event;
-			e.preventDefault();
+
+			if(!_this.options.click){
+				e.preventDefault();
+			}
 
 			touch_flag = true;
 			if(_this.options.flashing.color){
