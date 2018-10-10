@@ -1,92 +1,73 @@
-﻿/**
- * @drag.js
- * @author songyang2017
- * @version 1.0.0
- * @Created: 2018-07-05
- * @description 拖拽移动端导航球，使其位置发生改变
- */
-(function(window,document,Math){
-	function Drag(el,options){
-		'use strict';
-		var _this = this;
-		_this.wrapper = typeof el === 'string' ? document.querySelector(el) : el;
-		var boundRect = _this.wrapper.getBoundingClientRect();
-		var touch_flag = false;
+;(function($win, $doc){
+    class Drag{
+        constructor(el, opts){
+            var $el = typeof el === 'string' ? $doc.querySelector(el) : el; //获取需挂载的Dom对象
+            //设置默认属性
+            var $opts = {
+                click: true //默认开启点击事件
+            };
+            $opts = this.extend($opts, opts)
 
-		_this.wrapper.style.transition = `box-shadow 0.2s linear`;
-		_this.wrapper.style.boxShadow = `none`;
-		_this.wrapper.style.visibility = 'visible'
-		_this.options = {
-			edge: true,
-			flashing:{	//开启阴影并自定义颜色
-				color: null 
-			},
-			click: false //开启可点击事件，默认为不可点击
-		}
-			
-		for(var i in options){
-			_this.options[i] = options[i];
-		}
-		
-		window.addEventListener('touchmove',function(e){
-		
-		},{passive:false}) //来源 https://segmentfault.com/a/1190000008512184, 解决iOS下，页面滑动this.wrapper touchstart事件不灵敏bug
+            var boundRect = $el.getBoundingClientRect(); //获取目标Dom的大小及相对视口的信息
+            var touchFlag = false; //判定手指滑动屏幕过程中状态的变化
 
-		_this.wrapper.addEventListener('touchstart',function(e){
-			var e = e||window.event;
+            // 手指接触屏幕时
+            $el.addEventListener('touchstart', e => {
+                !$opts.click ? e.preventDefault() : ''; //是否执行阻止点击
+                touchFlag = true;
+                //todo
+            }, {passive: false}) //来源 https://segmentfault.com/a/1190000008512184, 解决iOS设备下页面滑动this.wrapper touchstart事件不灵敏bug
 
-			if(!_this.options.click){
-				e.preventDefault();
-			}
+            // 手指滑动时 目标Dom执行
+            $el.addEventListener('touchmove', e => {
+                e.preventDefault(); // 滑动过程中阻止浏览器默认事件
 
-			touch_flag = true;
-			if(_this.options.flashing.color){
-				_this.wrapper.style.boxShadow = `0px 0px 21px 2px ${_this.options.flashing.color}`
-			}
-		})
+                let scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+                let scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
 
-		_this.wrapper.addEventListener('touchmove',function(e){
-			var e = e||window.event;
-			e.preventDefault();
-			var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
-			var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
+                if (touchFlag) {
+                    //	分别减去滚动的宽和高
+                    let MoveX = e.touches[0].pageX - scrollLeft -(boundRect.width/2);
+                    let MoveY = e.touches[0].pageY - scrollTop - (boundRect.height/2);
 
-			if(touch_flag){
-				//	分别减去滚动的宽和高
-				var MoveX = e.touches[0].pageX - scrollLeft -(boundRect.width/2); 
-				var MoveY = e.touches[0].pageY - scrollTop - (boundRect.height/2);
+                    if(MoveX<=0){  //边缘碰撞处理
+                        MoveX=0;
+                    }else if(MoveX>=(window.innerWidth-boundRect.width)){
+                        MoveX=window.innerWidth-boundRect.height
+                    }
+                    if(MoveY<0){
+                        MoveY=0
+                    }else if(MoveY>=(window.innerHeight -boundRect.height)){
+                        MoveY = window.innerHeight-boundRect.height
+                    }
 
-				if(_this.options.flashing.color){
-					_this.wrapper.style.boxShadow = `0px 0px 21px 2px ${_this.options.flashing.color}`
-				}
-				
-				if(MoveX<=0){  //边缘碰撞处理
-					MoveX=0;
-				}else if(MoveX>=(window.innerWidth-boundRect.width)){
-					MoveX=window.innerWidth-boundRect.height
-				}
-				if(MoveY<0){
-					MoveY=0
-				}else if(MoveY>=(window.innerHeight -boundRect.height)){
-					MoveY = window.innerHeight-boundRect.height
-				}
-				// _this.wrapper.style.transform = `translate3d(${MoveX}px,${MoveY}px,0)`;
-				// _this.wrapper.style.WebkitTransform = `translate3d(${MoveX}px,${MoveY}px,0)`;
-				_this.wrapper.style.left = `${MoveX}px`;
-				_this.wrapper.style.top = `${MoveY}px`;
-			}
-		})
-		
-		_this.wrapper.addEventListener('touchend',function(e){
-			touch_flag = false;
-			if(_this.options.flashing.color){
-				_this.wrapper.style.boxShadow = `none`
-			}
-		})
-	}
+                    $el.style.left = `${MoveX}px`;
+                    $el.style.top = `${MoveY}px`;
+                }
+            }, {passive: false})
 
-	Drag.prototype = {
-		
-	}
-	window.Drag = Drag;
-})(window,document,Math)
+            // 手指离开屏幕时
+            $el.addEventListener('touchend', e => {
+                touchFlag = false;
+            })
+
+            // 手指滑动时 屏幕需设定
+            $win.addEventListener('touchmove', e => {
+
+            }, {passive: false})
+
+            this.el = $el;
+            this.opts = $opts;
+        }
+    }
+    Drag.prototype = {
+        extend: function(obj, _obj){
+            for (let k in _obj) {
+                obj[k] = _obj[k]
+            }
+            return obj
+        }
+    }
+    //暴露给外部调用
+    $win.Drag = Drag;
+})(window, document)

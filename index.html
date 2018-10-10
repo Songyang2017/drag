@@ -1,33 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport"content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
-<title>首页</title>
-<style>
-.box{
-	width: 50px;
-	height: 50px;
-	background-color: skyblue;
-	border-radius: 50%;
-	position: fixed;
-	top: 30px;
-	left: 10px;
-	color:#fff;
-	text-align: center;
-	line-height: 50px;
-	font-size: 14px;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>练习</title>
+    <style>
+        body{
+            /*height: 1000px;*/
+        }
+        .ball{
+            width: 50px;
+            height: 50px;
+            background-color: skyblue;
+            border-radius: 50%;
+            position: fixed;
+            top: 30px;
+            left: 10px;
+            color:#fff;
+            text-align: center;
+            line-height: 50px;
+            font-size: 14px;
+            display: inline-block;
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
 </head>
 <body>
-	<div style="height: 1000px">测试</div>
-	<div class="box">拖拽</div>
-<script src="./src/drag.js"></script>
+<!--<div class="ball"></div>-->
+<a href="https://m.qidian.com/" class="ball">test</a>
+<script src="./src/drag.min.js"></script>
 <script>
-	new Drag('.box')
-
-	
+    var drag = new Drag('.ball', {
+        click: true
+    });
+    console.log(drag)
 </script>
 </body>
 </html>
